@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const { ServerConfig } = require("../../config");
+const { AppError } = require("../errors");
 
 function checkPassword(password, encryptedPassword) {
     const isMatched = bcrypt.compareSync(password, encryptedPassword);
@@ -17,7 +18,16 @@ function createToken(input) {
     }
 }
 
+function verifyToken(token) {
+    try {
+        return jwt.verify(token, ServerConfig.JWT_SECRET);
+    } catch(error) {
+        throw error;
+    }
+}
+
 module.exports = {
     checkPassword,
     createToken,
+    verifyToken,
 }
