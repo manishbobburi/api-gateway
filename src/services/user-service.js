@@ -70,8 +70,29 @@ async function isAuthenticated(token) {
         if(error.name == "TokenExpiredError") {
             throw new AppError("JWT token expired.", StatusCodes.BAD_REQUEST);
         }
-
         throw error;
+    }
+}
+
+async function addRoleToUser(data) {
+    try {
+        const user = await userRepository.get(data.id);
+        if(!user) {
+            throw new AppError("No user found with the given id.", StatusCodes.BAD_REQUEST);
+        }
+
+        const role = await roleRepository.getRoleByname(data.role);
+        if(!role) {
+            throw new AppError("No role found", StatusCodes.BAD_REQUEST);
+        }
+
+        user.addRole(role);
+        return user;
+    } catch(error) {
+        if(error instanceof AppError) {
+            throw error;
+        }
+        throw new AppError("Something went wrong.", StatusCodes.INTERNAL_SERVER_ERROR);
     }
 }
 
@@ -79,4 +100,5 @@ module.exports = {
     signup,
     signin,
     isAuthenticated,
+    addRoleToUser,
 }
