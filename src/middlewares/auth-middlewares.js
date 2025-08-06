@@ -27,7 +27,6 @@ function validateAuthRequest(req, res, next) {
 async function checkAuth(req, res, next) {
     try {
         const response = await UserService.isAuthenticated(req.headers["x-access-token"]);
-        console.log(response);
         if(response) {
             req.user = response;
             next();
@@ -37,7 +36,20 @@ async function checkAuth(req, res, next) {
     }
 }
 
+async function isAdmin(req, res, next) {
+    try {
+        const response = await UserService.isAdmin(req.user);
+        if(!response) {
+            throw new AppError("Unauthorised access.", StatusCodes.UNAUTHORIZED);
+        }
+        next();
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     validateAuthRequest,
     checkAuth,
+    isAdmin,
 }
