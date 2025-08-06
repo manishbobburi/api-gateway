@@ -3,6 +3,7 @@ const { StatusCodes } = require("http-status-codes");
 const { UserRepository, RoleRepository } = require("../repositories");
 const { AppError } = require("../utils/errors");
 const { Auth, Enums } = require("../utils/common");
+const { compareSync } = require("bcrypt");
 
 const userRepository = new UserRepository();
 const roleRepository = new RoleRepository();
@@ -96,9 +97,31 @@ async function addRoleToUser(data) {
     }
 }
 
+async function isAdmin(id) {
+    try {
+        const user = await userRepository.get(id);
+        if(!user) {
+            throw new AppError("No user found with the given id.", StatusCodes.BAD_REQUEST);
+        }
+
+        const role = await roleRepository.getRoleByname(Enums.USER_ROLES.ADMIN);
+        if(!role) {
+            throw new AppError("No role found.", StatusCodes.BAD_REQUEST);
+        }
+
+        return user.hasRole(role);
+    } catch(error) {
+        if(error instanceof AppError) {
+            throw error;
+        }
+        throw new AppError("Something went wrong.", StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
 module.exports = {
     signup,
     signin,
     isAuthenticated,
     addRoleToUser,
+    isAdmin,
 }

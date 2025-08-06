@@ -15,6 +15,8 @@ router.post("/signin",
 );
 
 router.post("/role",
+    AuthMiddlewares.checkAuth,
+    AuthMiddlewares.isAdmin,
     UserController.addRoleToUser
 )
 
