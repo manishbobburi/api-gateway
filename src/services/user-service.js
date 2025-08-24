@@ -38,8 +38,13 @@ async function signin(data) {
             throw new AppError("Invalid password.", StatusCodes.UNAUTHORIZED);
         }
 
-        const jwt = Auth.createToken({id: user.id, email: user.email});      
-        return jwt;
+        delete user.dataValues.password;
+        delete user.dataValues.createdAt;
+        delete user.dataValues.updatedAt;
+
+        const jwt = Auth.createToken({id: user.id, email: user.email});
+        user.dataValues.jwt = jwt;      
+        return user;
     } catch(error) {
         if(error instanceof AppError) {
             throw error;
