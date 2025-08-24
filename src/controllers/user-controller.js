@@ -23,11 +23,11 @@ async function signup(req, res) {
 
 async function signin(req, res) {
     try {
-        const token = await UserService.signin({
+        const user = await UserService.signin({
             email: req.body.email,
             password: req.body.password,
         });
-        SuccessResponse.data = token;
+        SuccessResponse.data = user;
         return res
                 .status(StatusCodes.CREATED)
                 .json(SuccessResponse);
