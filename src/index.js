@@ -15,6 +15,7 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
+
 app.use(cors({
     origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -46,6 +47,7 @@ app.use("/bookingService",
 );
         
 app.use(express.json());
+
 app.use(express.urlencoded({extended: true}));
 
 app.use('/api', apiRoutes);
