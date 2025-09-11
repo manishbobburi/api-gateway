@@ -25,15 +25,19 @@ function validateAuthRequest(req, res, next) {
 }
 
 async function checkAuth(req, res, next) {
-    try {
-        const response = await UserService.isAuthenticated(req.headers["x-access-token"]);
-        if(response) {
-            req.user = response;
-            next();
-        }       
-    } catch (error) {
-        throw error;
+  try {
+    const response = await UserService.isAuthenticated(req.headers["x-access-token"]);
+    if (!response) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
+    
+    req.user = response;
+
+    return next();
+  } catch (error) {
+    console.error("Auth failed:", error.message);
+    return res.status(error.statusCode || 401).json({ error: error.message });
+  }
 }
 
 async function isAdmin(req, res, next) {
