@@ -15,29 +15,38 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
-app.use(cors({ origin: "http://localhost:5173" }));
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "x-access-token"],
+    credentials: true
+}));
+
 
 app.use("/flightService", 
     AuthMiddlewares.checkAuth,
     createProxyMiddleware({
-    target: ServerConfig.FLIGHT_SERVICE,
-    changeOrigin: true,
-    pathRewrite: {
-        '^/flightService': '',
-    }
-}));
-
-app.use("/bookingService", 
+        target: ServerConfig.FLIGHT_SERVICE,
+        changeOrigin: true,
+        pathRewrite: {
+            '^/flightService': '',
+        }
+    })
+);
+    
+app.use("/bookingService",
     AuthMiddlewares.checkAuth,
     createProxyMiddleware({
-    target: ServerConfig.BOOKING_SERVICE, 
-    changeOrigin: true,
-    pathRewrite: {
-        '^/bookingService': '',
-    }
-}));
+        target: ServerConfig.BOOKING_SERVICE, 
+        changeOrigin: true,
+        pathRewrite: {
+            '^/bookingService': '',
+        }
+    })
+);
+        
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 app.use('/api', apiRoutes);
 
