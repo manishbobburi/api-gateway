@@ -19,7 +19,7 @@ app.use(limiter);
 app.use(cors({
     origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "x-access-token"],
+    allowedHeaders: ["Content-Type", "x-access-token", "x-idempotency-key"],
     credentials: true
 }));
 
