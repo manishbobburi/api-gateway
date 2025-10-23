@@ -1,9 +1,15 @@
-FROM node
+FROM node:20-alpine
 
 WORKDIR /developer/nodejs/api-gateway
 
-COPY . .
+RUN apk add --no-cache bash
+
+COPY package*.json ./
 
 RUN npm ci
 
-CMD ["npm", "run", "dev"]
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm run dev"]
